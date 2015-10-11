@@ -46,12 +46,20 @@ for i in train.columns:
 low_cardinal_categ_f  = [i[0] for i in categorical_f_card if i[1] < 10];
 high_cardinal_categ_f = [i[0] for i in categorical_f_card if i[1] >= 10];
 
-print(features_uniq_counts);
+print(features_uniq_twice);
+
+features_uniq_twice_removed = util.filterFeatures(train, features_uniq_twice, 1.0);
+features_uniq_twice_keep    = list(set(features_uniq_twice) - set(features_uniq_twice_removed))
+
+
+print(features_uniq_twice_keep);
 
 #Drop fields
 train.drop('ID', axis=1, inplace=True);
 train.drop(features_uniq_count, axis=1, inplace=True);
+train.drop(features_uniq_twice_removed, axis=1, inplace=True);
 train.drop(datecolumns, axis=1, inplace=True); #Drop dates for now
+
 
 
 #One hot encode

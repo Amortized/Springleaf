@@ -27,3 +27,23 @@ def encode_onehot(df, cols):
     df = df.drop(cols, axis=1)
     df = df.join(vec_data)
     return df
+
+
+def filterFeatures(df, cols, threshold):
+    """
+      cols is features which have only two unique values.
+      For each feature, if any of those values is less than thres per, then ignore feature
+    """
+    remove_f = [];
+    for i in cols:
+       x = df[i].value_counts();  
+       y = 100.0 * (x / sum(x.values));
+       if (y < threshold).sum() == 1:
+          #Ignore the feature
+          remove_f.append(i);
+
+    return remove_f;
+ 	  
+
+
+
