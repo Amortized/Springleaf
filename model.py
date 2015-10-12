@@ -48,7 +48,7 @@ watchlist = [ (dtrain,'train'), (dvalidation, 'validation') ];
 
 #Params
 param      = {'eval_metric' : 'auc', 'objective' : 'binary:logistic', 'nthread' : 8, \
-	      'colsample_bytree' : 1.0, 'subsample' : 1.0,'max_depth' : 7};
+	      'colsample_bytree' : 0.80, 'subsample' : 0.80,'max_depth' : 5, 'eta': 0.05};
 num_round  = 1000;
 classifier = xgb.train(param,dtrain,num_round,evals=watchlist,early_stopping_rounds=100);
 
