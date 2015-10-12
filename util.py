@@ -44,6 +44,18 @@ def filterFeatures(df, cols, threshold):
 
     return remove_f;
  	  
+def binning(df, cols, threshold):
+    """
+      Features of interest
+      For each feature, if any of those values is less than thres per, then all of them merged into one
+    """
 
+    for i in cols:
+       x = df[i].value_counts();  
+       y = 100.0 * (x / sum(x.values));
+       z = y[y < threshold].keys();
+       df[i] = ["other" if v in z else v for v in df[i].values];	
+       
+    return df;
 
 
