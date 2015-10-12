@@ -21,7 +21,7 @@ import copy
 from sklearn.preprocessing import OneHotEncoder;
 from numpy import array;
 import pandas as pd;
-
+import random;
 
 #Read Data
 train = pd.read_pickle("/mnt/data/Springleaf/train.csv.pickle");
@@ -47,9 +47,9 @@ watchlist = [ (dtrain,'train'), (dvalidation, 'validation') ];
 
 #Params
 param      = {'eval_metric' : 'auc', 'objective' : 'binary:logistic', 'nthread' : 16, \
-	      'colsample_bytree' : 0.80, 'subsample' : 0.80,'max_depth' : 5, 'eta': 0.01};
+	      'colsample_bytree' : 0.80, 'subsample' : 0.70,'max_depth' : 5, 'eta': 0.01, 'seed' : random.randint(0,2000)};
 
-num_round  = 1500;
+num_round  = 2500;
 classifier = xgb.train(param,dtrain,num_round,evals=watchlist,early_stopping_rounds=100);
 
 metric     = classifier.best_score;
@@ -68,7 +68,7 @@ test_ids   = pd.read_pickle("/mnt/data/Springleaf/test_ids.pickle");
 test_ids   = test_ids.ID;
 
 df = pd.DataFrame({'ID':test_ids, 'target' : y_hat});
-df.to_csv('submission.csv', index=False);
+df.to_csv('submission1.csv', index=False);
 
 
 
