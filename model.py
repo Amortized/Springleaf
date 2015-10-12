@@ -24,7 +24,7 @@ import pandas as pd;
 
 
 #Read Data
-train = pd.read_pickle("./data/train.csv.sample.pickle");
+train = pd.read_pickle("./data/train.csv.pickle");
 
 train_Y = train.target;
 train.drop('target',inplace=True,axis=1);
@@ -57,7 +57,7 @@ itr        = classifier.best_iteration;
 print("\n Metric : " + str(metric) + " for Params " + str(param) + " occurs at " + str(itr));
 
 classifier.save_model('./data/1.xgb_model');
-f = open("./data/params.txt");
+f = open("./data/params.txt", "w");
 f.write("metric : " + str(metric) + "\n");
 f.write("itr : " + str(itr) + "\n");
 f.close();

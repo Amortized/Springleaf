@@ -86,7 +86,6 @@ del train;
 
 #Read test
 test = pd.read_csv("./data/test.csv");
-test.drop('ID', axis=1, inplace=True);
 test.drop(features_uniq_count, axis=1, inplace=True);
 test.drop(features_uniq_twice_removed, axis=1, inplace=True);
 test.drop(datecolumns, axis=1, inplace=True); #Drop dates for now
