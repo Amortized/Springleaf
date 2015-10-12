@@ -10,7 +10,7 @@ from sklearn.feature_selection import VarianceThreshold;
 import numpy as np;
 
 #Read data
-train = pd.read_csv("./data/train.csv");
+train = pd.read_csv("/mnt/data/Springleaf/train.csv");
 
 groups              = train.columns.to_series().groupby(train.dtypes).groups;
 dataType_var        = {k.name: v for k, v in groups.items()};
@@ -80,12 +80,16 @@ train = util.encode_onehot(train, cols=all_f)
 
 print("No of features after one hot encoding : " + str(len(train.columns)));
 
-train.to_pickle("./data/train.csv.pickle");
+train.to_pickle("/mnt/data/Springleaf/train.csv.pickle");
 
 del train;
 
 #Read test
-test = pd.read_csv("./data/test.csv");
+test    = pd.read_csv("/mnt/data/Springleaf/test.csv");
+id_df   = pd.DataFrame({'ID':test.ID});
+id_df.to_pickle("/mnt/data/Springleaf/test_ids.pickle");
+
+test.drop('ID', axis=1, inplace=True);
 test.drop(features_uniq_count, axis=1, inplace=True);
 test.drop(features_uniq_twice_removed, axis=1, inplace=True);
 test.drop(datecolumns, axis=1, inplace=True); #Drop dates for now
@@ -99,6 +103,6 @@ all_f =  numerical_f + high_cardinal_categ_f + low_cardinal_categ_f;
 #One hot encode
 test = util.encode_onehot(test, cols=all_f)
 
-test.to_pickle("./data/test.csv.pickle");
+test.to_pickle("/mnt/data/Springleaf/test.csv.pickle");
 
 
