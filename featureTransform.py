@@ -84,13 +84,16 @@ all_f =  numerical_f + high_cardinal_categ_f + low_cardinal_categ_f + date_colum
 #One hot encode
 train = util.encode_onehot(train, cols=all_f);
 
+
 #Order of columns
 train_cols = list(set(train.columns) - set('target'));
 
 #Read test
 test    = pd.read_csv("/mnt/data/Springleaf/test.csv");
 id_df   = pd.DataFrame({'ID':test.ID});
+
 id_df.to_csv("/mnt/data/Springleaf/test_ids.processed");
+
 
 test.drop('ID', axis=1, inplace=True);
 test.drop(features_uniq_count, axis=1, inplace=True);
@@ -113,6 +116,7 @@ test_cols = list(set(test.columns));
 #Take only features common between test and train
 features = list(set(train_cols).intersection(set(test_cols))); 
 
+
 print(list(features));
 
 train      = train[features+['target']];
@@ -120,6 +124,7 @@ test       = test[features];
 
 print("No of features after one hot encoding : " + str(len(train.columns)));
 print("No of features after one hot encoding : " + str(len(test.columns)));
+
 
 train.to_csv("/mnt/data/Springleaf/train.csv.processed");
 test.to_csv("/mnt/data/Springleaf/test.csv.processed");

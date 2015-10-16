@@ -24,7 +24,9 @@ import pandas as pd;
 import random;
 
 #Read Data
+
 train = pd.read_csv("/mnt/data/Springleaf/train.csv.processed");
+
 
 train_Y = train.target;
 train.drop('target',inplace=True,axis=1);
@@ -51,6 +53,8 @@ param      = {'eval_metric' : 'auc', 'objective' : 'binary:logistic', 'nthread' 
 	      'seed' : random.randint(0,2000)};
 
 num_round  = 3000;
+
+
 classifier = xgb.train(param,dtrain,num_round,evals=watchlist,early_stopping_rounds=100);
 
 metric     = classifier.best_score;
@@ -59,11 +63,13 @@ print("\n Metric : " + str(metric) + " for Params " + str(param) + " occurs at "
 
 del dtrain, dvalidation;
 
+
 #Predict
 t_x        = pd.read_csv("/mnt/data/Springleaf/test.csv.processed");
 t_x        = t_x.as_matrix();
 t_x        = xgb.DMatrix(t_x, missing=float('NaN'));
 y_hat      = classifier.predict(t_x,ntree_limit=itr);
+
 
 test_ids   = pd.read_csv("/mnt/data/Springleaf/test_ids.processed");
 test_ids   = test_ids.ID;
