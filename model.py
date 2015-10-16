@@ -21,10 +21,10 @@ import copy
 from sklearn.preprocessing import OneHotEncoder;
 from numpy import array;
 import pandas as pd;
-
+import random;
 
 #Read Data
-train = pd.read_pickle("./data/train.csv.pickle");
+train = pd.read_csv("/mnt/data/Springleaf/train.csv.processed");
 
 train_Y = train.target;
 train.drop('target',inplace=True,axis=1);
@@ -37,7 +37,6 @@ X_train, X_test, Y_train, Y_test = train_test_split(train_X, train_Y, test_size=
 dtrain      = xgb.DMatrix( X_train, label=Y_train, missing=float('NaN'));
 dvalidation = xgb.DMatrix( X_test, label=Y_test,missing=float('NaN'));
 
-print(X_train);
 
 del X_train, X_test, Y_train, Y_test;
 
@@ -47,22 +46,28 @@ watchlist = [ (dtrain,'train'), (dvalidation, 'validation') ];
 
 
 #Params
-param      = {'eval_metric' : 'auc', 'objective' : 'binary:logistic', 'nthread' : 8, \
-	      'colsample_bytree' : 0.80, 'subsample' : 0.80,'max_depth' : 5, 'eta': 0.05};
-num_round  = 1000;
+param      = {'eval_metric' : 'auc', 'objective' : 'binary:logistic', 'nthread' : 16, \
+	      'colsample_bytree' : 0.4, 'subsample' : 0.40,'max_depth' : 6, 'eta': 0.01,\
+	      'seed' : random.randint(0,2000)};
+
+num_round  = 3000;
 classifier = xgb.train(param,dtrain,num_round,evals=watchlist,early_stopping_rounds=100);
 
 metric     = classifier.best_score;
 itr        = classifier.best_iteration;
 print("\n Metric : " + str(metric) + " for Params " + str(param) + " occurs at " + str(itr));
 
-classifier.save_model('./data/1.xgb_model');
-f = open("./data/params.txt", "w");
-f.write("metric : " + str(metric) + "\n");
-f.write("itr : " + str(itr) + "\n");
-f.close();
+del dtrain, dvalidation;
 
+#Predict
+t_x        = pd.read_csv("/mnt/data/Springleaf/test.csv.processed");
+t_x        = t_x.as_matrix();
+t_x        = xgb.DMatrix(t_x, missing=float('NaN'));
+y_hat      = classifier.predict(t_x,ntree_limit=itr);
 
+test_ids   = pd.read_csv("/mnt/data/Springleaf/test_ids.processed");
+test_ids   = test_ids.ID;
 
-
+df = pd.DataFrame({'ID':test_ids, 'target' : y_hat});
+df.to_csv('submission2.csv', index=False);
 

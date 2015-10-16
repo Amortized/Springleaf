@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.feature_extraction import DictVectorizer
 import random;
+import time;
  
 def encode_onehot(df, cols):
     """
@@ -44,6 +45,42 @@ def filterFeatures(df, cols, threshold):
 
     return remove_f;
  	  
+def filterDateFeatures(df, cols, threshold):
+    """
+      For each date feature, if no of null's exceed a threshold.
+    """
+    remove_f = [];
+    for i in cols:
+       x = 100.0 * (df[i].isnull().sum() / float(df[i].size));
+       if (x > threshold) :
+          #Ignore the feature
+          remove_f.append(i);
+
+    return remove_f;
+
+def createDateFeatures(df, cols):
+    """
+      #Convert each date column to year,month,season,date_of_month,day_of_week,weekend
+    """
+    new_features = [];
+    for i in cols:	
+       x = [time.strptime(str(k),"%d%b%y:%H:%M:%S") if str(k) != "nan" else "other" for k in df[i]];
+       #For each date feature
+       df[str(i) + "_year"]     = ["v_" + str(k.tm_year) if type(k) == time.struct_time else "v_" + str(-1) for k in x]
+       df[str(i) + "_month"]    = ["v_" + str(k.tm_mon)  if type(k) == time.struct_time else "v_" + str(-1) for k in x]
+       df[str(i) + "_weekday"]  = ["v_" + str(k.tm_wday) if type(k) == time.struct_time else "v_" + str(-1) for k in x]              
+       df[str(i) + "_monthday"] = ["v_" + str(k.tm_mday) if type(k) == time.struct_time else "v_" + str(-1) for k in x]	 	
+       df[str(i) + "_yearday"]  = [k.tm_yday if type(k) == time.struct_time else -1 for k in x]	 	
+
+       new_features.append(str(i) + "_year");		
+       new_features.append(str(i) + "_month");
+       new_features.append(str(i) + "_weekday");
+       new_features.append(str(i) + "_monthday");
+       #new_features.append(str(i) + "_yearday");
+   
+    return df, new_features;
+
+
 def binning(df, cols, threshold):
     """
       Features of interest
@@ -54,8 +91,10 @@ def binning(df, cols, threshold):
        x = df[i].value_counts();  
        y = 100.0 * (x / sum(x.values));
        z = y[y < threshold].keys();
-       df[i] = ["other" if v in z else v for v in df[i].values];	
+       df[i] = ["other" if v in z else "v_" + str(v) for v in df[i].values];	
        
     return df;
 
+
+    
 
