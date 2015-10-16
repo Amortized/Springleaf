@@ -49,7 +49,7 @@ watchlist = [ (dtrain,'train'), (dvalidation, 'validation') ];
 
 #Params
 param      = {'eval_metric' : 'auc', 'objective' : 'binary:logistic', 'nthread' : 16, \
-	      'colsample_bytree' : 0.4, 'subsample' : 0.40,'max_depth' : 6, 'eta': 0.01,\
+	      'colsample_bytree' : 0.4, 'subsample' : 0.8,'max_depth' : 8, 'eta': 0.005,\
 	      'seed' : random.randint(0,2000)};
 
 num_round  = 3000;
